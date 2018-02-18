@@ -17,6 +17,7 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:4.2.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:4.2.0.RELEASE" />
           <element id="library" level="project" name="Maven: javax.servlet:jstl:1.2" />
+          <element id="library" level="project" name="Maven: com.h2database:h2:1.4.196" />
         </element>
       </element>
       <element id="directory" name="META-INF">
