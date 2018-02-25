@@ -3,6 +3,7 @@ package com.userlist.controller;
 import com.userlist.dao.UserDao;
 import com.userlist.model.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,33 +22,70 @@ public class UserController
     }
 
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
-    public String signIn(@RequestParam String name, @RequestParam String password) throws SQLException, ClassNotFoundException
+    public ModelAndView signIn(@RequestParam String name, @RequestParam String password) throws SQLException, ClassNotFoundException
     {
-        if(userDao.signInUser(name, password))
+        String role = userDao.signInUser(name, password);
+        if(!role.isEmpty())
         {
-            return "redirect:/users";
+            return account(name, role);
         }
-        return "index";
+        ModelAndView map = new ModelAndView("index");
+        return map;
     }
 
-    @RequestMapping(value = {"/users"}, method = RequestMethod.GET)
-    public ModelAndView listUser() throws SQLException, ClassNotFoundException
+    @RequestMapping(value = "/signin/add/{id}", method = RequestMethod.GET)
+    public void addAuto (@PathVariable Integer id) throws SQLException, ClassNotFoundException
     {
-        List<User> list = userDao.listUsers();
+        userDao.addCar(id);
+    }
+
+    @RequestMapping(value = "/signin/del/{id}", method = RequestMethod.GET)
+    public void removeAuto (@PathVariable Integer id) throws SQLException, ClassNotFoundException
+    {
+        userDao.removeCar(id);
+    }
+
+    public ModelAndView account(String name, String role) throws SQLException, ClassNotFoundException
+    {
+        ModelAndView map = new ModelAndView("account");
+        if(role.equals("admin"))
+        {
+            getUsers();
+        }
+        map.addObject("cars", userDao.getAuto(name));
+        map.addObject("allcars",userDao.getAllAuto());
+        return map;
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public ModelAndView getUsers () throws SQLException, ClassNotFoundException
+    {
         ModelAndView map = new ModelAndView("users");
+        List<User> list = userDao.listUsers();
         map.addObject("users", list);
         return map;
     }
 
     @RequestMapping(value="users/del/{id}", method = RequestMethod.GET)
-    public ModelAndView delUser(@PathVariable Integer id) throws SQLException, ClassNotFoundException {
+    public String delUser(@PathVariable Integer id) throws SQLException, ClassNotFoundException {
         userDao.removeUser(id);
-        return listUser();
+        return "redirect:/users";
     }
 
-    @RequestMapping(value = "users/add/", method = RequestMethod.POST)
-    public ModelAndView newUser(@RequestParam String name, @RequestParam String surname, @RequestParam String password) throws SQLException, ClassNotFoundException {
-        userDao.addUser(name, surname, password);
-        return listUser();
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    public String newUser(Model model, @RequestParam String name, @RequestParam String surname, @RequestParam String password, @RequestParam String description) throws SQLException, ClassNotFoundException
+    {
+        boolean foo = userDao.addUser(name, surname, password, description, 1);
+        if(!foo)
+        {
+            model.addAttribute("message", "A person with this name already exists!");
+        }
+        return "signup";
+    }
+
+    @RequestMapping(value="/signup", method = RequestMethod.GET)
+    public String signUp () throws SQLException, ClassNotFoundException
+    {
+        return "signup";
     }
 }
