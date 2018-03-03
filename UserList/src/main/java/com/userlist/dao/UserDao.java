@@ -91,7 +91,7 @@ public class UserDao
             else
                 return "admin";
         }
-        return null;
+        return "none";
     }
 
     public List<Auto> getAuto (String name) throws SQLException, ClassNotFoundException

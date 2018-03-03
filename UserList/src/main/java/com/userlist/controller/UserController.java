@@ -22,35 +22,45 @@ public class UserController
     }
 
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
-    public ModelAndView signIn(@RequestParam String name, @RequestParam String password) throws SQLException, ClassNotFoundException
+    public ModelAndView signIn(Model model, @RequestParam String name, @RequestParam String password) throws SQLException, ClassNotFoundException
     {
         String role = userDao.signInUser(name, password);
-        if(!role.isEmpty())
+        if(role.equals("none"))
+        {
+            model.addAttribute("message", "Uncorrect login or password");
+        }
+        ModelAndView map = new ModelAndView("index");
+
+        if(role.equals("admin") || role.equals("user"))
         {
             return account(name, role);
         }
-        ModelAndView map = new ModelAndView("index");
         return map;
     }
 
     @RequestMapping(value = "/signin/add/{id}", method = RequestMethod.GET)
-    public void addAuto (@PathVariable Integer id) throws SQLException, ClassNotFoundException
+    public ModelAndView addAuto (@PathVariable Integer id) throws SQLException, ClassNotFoundException
     {
+        ModelAndView map = new ModelAndView("/signin");
         userDao.addCar(id);
+        return map;
     }
 
     @RequestMapping(value = "/signin/del/{id}", method = RequestMethod.GET)
-    public void removeAuto (@PathVariable Integer id) throws SQLException, ClassNotFoundException
+    public ModelAndView removeAuto (@PathVariable Integer id) throws SQLException, ClassNotFoundException
     {
+        ModelAndView map = new ModelAndView("/signin");
         userDao.removeCar(id);
+        return map;
     }
 
     public ModelAndView account(String name, String role) throws SQLException, ClassNotFoundException
     {
-        ModelAndView map = new ModelAndView("account");
+        ModelAndView map = new ModelAndView("/account");
         if(role.equals("admin"))
         {
-            getUsers();
+            map.addObject("link", "users");
+            //getUsers();
         }
         map.addObject("cars", userDao.getAuto(name));
         map.addObject("allcars",userDao.getAllAuto());
@@ -63,6 +73,7 @@ public class UserController
         ModelAndView map = new ModelAndView("users");
         List<User> list = userDao.listUsers();
         map.addObject("users", list);
+
         return map;
     }
 
