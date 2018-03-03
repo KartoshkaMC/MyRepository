@@ -30,7 +30,7 @@
                             ${acar.name}
                         </td>
                         <td>
-                            <img src="${acar.url}" width="75" height="75">
+                            <img src="${acar.url}" width="50" height="50">
                         </td>
                         <td>
 
@@ -65,7 +65,7 @@
                                 ${car.name}
                         </td>
                         <td>
-                            <img src="${car.url}" width="75" height="75">
+                            <img src="${car.url}" width="50" height="50">
                         </td>
                         <td>
                             <a class="btn btn-dark"

@@ -73,7 +73,6 @@ public class UserController
         ModelAndView map = new ModelAndView("users");
         List<User> list = userDao.listUsers();
         map.addObject("users", list);
-
         return map;
     }
 

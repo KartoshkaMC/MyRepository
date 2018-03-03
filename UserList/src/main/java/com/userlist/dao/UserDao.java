@@ -45,8 +45,13 @@ public class UserDao
     public void removeUser (int id) throws SQLException, ClassNotFoundException
     {
         Connection connection = getConnection();
-        String removeUser = "DELETE FROM USER_TABLE WHERE USER_ID = " + id;
+
+        String removeUser = "DELETE FROM OWNERS WHERE USER_ID = " + id;
         PreparedStatement preparedStatement = connection.prepareStatement(removeUser);
+        preparedStatement.executeUpdate();
+
+        removeUser = "DELETE FROM USER_TABLE WHERE USER_ID = " + id;
+        preparedStatement = connection.prepareStatement(removeUser);
         preparedStatement.executeUpdate();
     }
 
